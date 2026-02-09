@@ -1,0 +1,45 @@
+# Configuração do Agente AI
+
+## 🔒 Carregamento Obrigatório
+
+Antes de QUALQUER ação de código, o agente DEVE:
+
+1. Ler TODAS as 15 leis em `.agent/rules/` na ordem numérica
+2. Verificar qual skill é relevante através do YAML Frontmatter
+3. Carregar apenas o corpo completo da skill se necessário
+4. Aplicar as restrições inegociáveis das leis relevantes
+
+## 📚 Sistema de Skills (Lazy Loading)
+
+### Ativação Inteligente
+
+- Ler primeiro: `name` e `description` do YAML Frontmatter
+- Decidir relevância: skill se aplica à tarefa atual?
+- Carregar completo: somente se ativada, ler o body markdown completo
+
+### Exemplo de Frontmatter
+
+```yaml
+---
+name: "Security Best Practices"
+description: "Enforce zero-trust architecture and credential isolation"
+triggers:
+  - "authentication"
+  - "API keys"
+  - "database access"
+---
+```
+
+## ⚡ Otimização de Contexto
+
+- Limite inicial: 8K tokens para análise de skills
+- Carregamento incremental: +4K tokens por skill ativada
+- Prioridade: Rules > Skills ativas > Skills inativas
+
+## 🚫 Restrições Absolutas
+
+- Lei 01: Nunca exponha Service Role Keys no frontend
+- Lei 03: Company_id sempre extraído da sessão, nunca do request
+- Lei 04: API Keys sempre criptografadas em repouso
+- Lei 02: Async first - proibido código bloqueante em FastAPI
+- Lei 15: Protocolo PPREVC - Planejar antes de executar código
